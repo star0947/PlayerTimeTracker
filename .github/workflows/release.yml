@@ -2,7 +2,7 @@ on:
   release:
     types:
       - published
-  
+
 jobs:
   build:
     runs-on: windows-latest
@@ -13,11 +13,7 @@ jobs:
           - client
     steps:
       - uses: actions/checkout@v6
-
       - uses: xmake-io/github-action-setup-xmake@v1
-        # with:
-        #   xmake-version: branch@master
-
       - uses: actions/cache@v5
         with:
           path: |
@@ -25,16 +21,12 @@ jobs:
           key: xmake-${{ hashFiles('xmake.lua') }}
           restore-keys: |
             xmake-
-
       - run: |
           xmake repo -u
-
       - run: |
           xmake f -a x64 -m release -p windows --target_type=${{ matrix.target_type }} -y
-
       - run: |
           xmake -w -y
-
       - uses: actions/upload-artifact@v7
         with:
           name: ${{ github.event.repository.name }}-${{ github.sha }}-${{ matrix.target_type }}-windows-x64
@@ -47,10 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
       - id: extract-release-notes
         uses: ffurrer2/extract-release-notes@v3
-
       - uses: softprops/action-gh-release@v3
         with:
           body: |
@@ -70,19 +60,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
       - uses: actions/download-artifact@v8
         with:
           name: ${{ github.event.repository.name }}-${{ github.sha }}-${{ matrix.target_type }}-windows-x64
           path: artifact
-
       - run: |
           cp CHANGELOG.md LICENSE README.md artifact/
-
       - run: |
           zip -r ../${{ github.event.repository.name }}-${{ matrix.target_type }}-windows-x64.zip *
         working-directory: artifact
-
       - uses: softprops/action-gh-release@v3
         with:
           files: |
