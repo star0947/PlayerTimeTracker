@@ -1,26 +1,24 @@
-# LeviLamina Mod Template
+# PlayerTimeTracker
 
-Mod Template for LeviLamina
+一个轻量级的 LeviLamina 插件，统计每个玩家的累计在线时长，并通过后台服务器日志输出。
 
-## Usage
+### 功能
 
-For detailed instructions, see the [LeviLamina Documentation](https://lamina.levimc.org/developer_guides/tutorials/create_your_first_mod/)
+- 📌 监听玩家加入/离开事件，自动记录在线时长
+- 🧮 使用玩家 UUID 作为唯一标识，支持离线模式
+- 💾 数据持久化存储（内置 LevelDB），插件重载不丢失
+- 📋 在服务器控制台中输出玩家本次在线时长及累计总时长
+- 🐧 完全兼容 Wine + Docker 环境
 
-1. Generate a new repository from this template
-2. Clone the new repository
-3. Change the mod name and the expected LeviLamina version in `xmake.lua`
-4. Add your code.
-5. Run `xmake f -y -p windows -a x64 -m release` in the root of the repository
-6. Run `xmake` to build the mod.
+### 工作原理
 
-After a successful build, you will find mod in `bin/`
+1. **玩家加入** → 记录玩家 UUID 和当前时间戳（Unix 秒数）。
+2. **玩家退出** → 用退出时间戳减去加入时间戳得到本次在线秒数。
+3. 将本次秒数累加到 LevelDB 中（Key：UUID，Value：总秒数）。
+4. 插件卸载时，自动结算所有仍在线的玩家，保证数据不丢失。
 
-## Contributing
+### 安装
 
-Ask questions by creating an issue.
-
-PRs accepted.
-
-## License
-
-CC0-1.0 © LeviMC(LiteLDev)
+1. 从 [Releases](https://github.com/star0947/PlayerTimeTracker/releases) 下载最新版本。
+2. 将压缩包内的所有内容解压到 BDS 的 `plugins/` 目录下。
+3. 启动服务器，插件即自动生效。
